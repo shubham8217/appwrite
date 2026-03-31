@@ -279,6 +279,8 @@ jobs:
 
       - name: Load and Start Appwrite
         timeout-minutes: 5
+        env:
+          _APP_E2E_RESPONSE_FORMAT: ${{ github.event.inputs.response_format }}
         run: |
           docker load --input /tmp/${{ env.IMAGE }}.tar
           docker compose pull --quiet --ignore-buildable
@@ -297,9 +299,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           test_dir: tests/unit
           command: >-
-            docker compose exec
-            -e _APP_E2E_RESPONSE_FORMAT="${{ github.event.inputs.response_format }}"
-            appwrite test /usr/src/code/tests/unit
+            docker compose exec appwrite test /usr/src/code/tests/unit
 
   e2e_general:
     name: Tests / E2E / General
@@ -326,6 +326,8 @@ jobs:
 
       - name: Load and Start Appwrite
         timeout-minutes: 5
+        env:
+          _APP_E2E_RESPONSE_FORMAT: ${{ github.event.inputs.response_format }}
         run: |
           docker load --input /tmp/${{ env.IMAGE }}.tar
           docker compose pull --quiet --ignore-buildable
@@ -349,9 +351,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           test_dir: tests/e2e/General
           command: >-
-            docker compose exec -T
-            -e _APP_E2E_RESPONSE_FORMAT="${{ github.event.inputs.response_format }}"
-            appwrite test /usr/src/code/tests/e2e/General
+            docker compose exec -T appwrite test /usr/src/code/tests/e2e/General
 
       - name: Failure Logs
         if: failure()
@@ -449,6 +449,7 @@ jobs:
         timeout-minutes: 5
         env:
           _APP_BROWSER_HOST: http://invalid-browser/v1
+          _APP_E2E_RESPONSE_FORMAT: ${{ github.event.inputs.response_format }}
           _APP_DATABASE_SHARED_TABLES: ${{ matrix.mode != 'dedicated' && 'database_db_main' || '' }}
           _APP_DATABASE_SHARED_TABLES_V1: ${{ matrix.mode == 'shared_v1' && 'database_db_main' || '' }}
           _APP_DATABASE_DOCUMENTSDB_SHARED_TABLES: ${{ matrix.mode != 'dedicated' && 'documentsdb_db_main' || '' }}
@@ -486,9 +487,7 @@ jobs:
               Databases|TablesDB|Functions|Realtime) FUNCTIONAL_FLAG="" ;;
             esac
 
-            docker compose exec -T \
-              -e _APP_E2E_RESPONSE_FORMAT="${{ github.event.inputs.response_format }}" \
-              appwrite vendor/bin/paratest --processes $(nproc) $FUNCTIONAL_FLAG "$SERVICE_PATH" --exclude-group abuseEnabled --exclude-group screenshots --log-junit tests/e2e/Services/${{ matrix.service }}/junit.xml
+            docker compose exec -T appwrite vendor/bin/paratest --processes $(nproc) $FUNCTIONAL_FLAG "$SERVICE_PATH" --exclude-group abuseEnabled --exclude-group screenshots --log-junit tests/e2e/Services/${{ matrix.service }}/junit.xml
 
       - name: Failure Logs
         if: failure()
@@ -527,6 +526,7 @@ jobs:
         timeout-minutes: 5
         env:
           _APP_OPTIONS_ABUSE: enabled
+          _APP_E2E_RESPONSE_FORMAT: ${{ github.event.inputs.response_format }}
           _APP_DATABASE_SHARED_TABLES: ${{ matrix.mode != 'dedicated' && 'database_db_main' || '' }}
           _APP_DATABASE_SHARED_TABLES_V1: ${{ matrix.mode == 'shared_v1' && 'database_db_main' || '' }}
           _APP_DATABASE_DOCUMENTSDB_SHARED_TABLES: ${{ matrix.mode != 'dedicated' && 'documentsdb_db_main' || '' }}
@@ -548,9 +548,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           test_dir: tests/e2e
           command: >-
-            docker compose exec -T
-            -e _APP_E2E_RESPONSE_FORMAT="${{ github.event.inputs.response_format }}"
-            appwrite test /usr/src/code/tests/e2e --group=abuseEnabled
+            docker compose exec -T appwrite test /usr/src/code/tests/e2e --group=abuseEnabled
 
       - name: Failure Logs
         if: failure()
@@ -588,6 +586,7 @@ jobs:
       - name: Load and Start Appwrite
         timeout-minutes: 5
         env:
+          _APP_E2E_RESPONSE_FORMAT: ${{ github.event.inputs.response_format }}
           _APP_DATABASE_SHARED_TABLES: ${{ matrix.mode != 'dedicated' && 'database_db_main' || '' }}
           _APP_DATABASE_SHARED_TABLES_V1: ${{ matrix.mode == 'shared_v1' && 'database_db_main' || '' }}
           _APP_DATABASE_DOCUMENTSDB_SHARED_TABLES: ${{ matrix.mode != 'dedicated' && 'documentsdb_db_main' || '' }}
@@ -617,9 +616,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           test_dir: tests/e2e/Services/Sites
           command: >-
-            docker compose exec -T
-            -e _APP_E2E_RESPONSE_FORMAT="${{ github.event.inputs.response_format }}"
-            appwrite test /usr/src/code/tests/e2e/Services/Sites --group=screenshots
+            docker compose exec -T appwrite test /usr/src/code/tests/e2e/Services/Sites --group=screenshots
 
       - name: Failure Logs
         if: failure()
